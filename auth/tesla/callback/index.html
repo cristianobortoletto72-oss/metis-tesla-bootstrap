@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metis Tesla OAuth Callback</title>
+</head>
+<body>
+  <main>
+    <h1>Tesla authorization returned to Metis</h1>
+    <p>This temporary page is for the Tesla Fleet API proof of concept.</p>
+    <p>Keep the authorization code private. Do not paste the callback URL, authorization code, access token, refresh token, client secret, password, or MFA code into chat.</p>
+    <div id="result"></div>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const result = document.getElementById('result');
+    const error = params.get('error');
+    const code = params.get('code');
+    const state = params.get('state');
+
+    if (error) {
+      result.textContent = `Tesla returned an error: ${error}`;
+    } else if (code) {
+      const heading = document.createElement('p');
+      heading.textContent = 'Authorization code received successfully. Copy it only into the local PowerShell command used for the token exchange.';
+      result.appendChild(heading);
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = code;
+      input.readOnly = true;
+      input.setAttribute('aria-label', 'Authorization code');
+      input.style.width = '100%';
+      result.appendChild(input);
+
+      const button = document.createElement('button');
+      button.textContent = 'Copy authorization code';
+      button.onclick = async () => {
+        await navigator.clipboard.writeText(code);
+        button.textContent = 'Copied';
+      };
+      result.appendChild(button);
+
+      if (state) {
+        const stateText = document.createElement('p');
+        stateText.textContent = `State returned: ${state}`;
+        result.appendChild(stateText);
+      }
+    } else {
+      result.textContent = 'No authorization code was present in the callback URL.';
+    }
+  </script>
+</body>
+</html>
