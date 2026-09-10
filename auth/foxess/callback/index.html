@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Metis – FoxESS OAuth Callback</title>
+</head>
+<body>
+  <main>
+    <h1>Metis – FoxESS OAuth callback</h1>
+    <p id="status">Waiting for FoxESS authorization response…</p>
+    <pre id="details"></pre>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const state = params.get('state');
+    const error = params.get('error');
+    const status = document.getElementById('status');
+    const details = document.getElementById('details');
+
+    if (error) {
+      status.textContent = 'FoxESS returned an authorization error.';
+      details.textContent = 'error=' + error + (params.get('error_description') ? '\nerror_description=' + params.get('error_description') : '');
+    } else if (code) {
+      status.textContent = 'FoxESS authorization code received successfully.';
+      details.textContent = 'code=' + code + (state ? '\nstate=' + state : '');
+    } else {
+      status.textContent = 'Callback page is working, but no authorization code was supplied.';
+    }
+  </script>
+</body>
+</html>
